@@ -1,0 +1,17 @@
+{
+    "project": "Building Energy Consumption Prediction",
+    "building_type": "Hospitals",
+    "target": "Total_Energy_kWh",
+    "n_samples": 8736,
+    "n_features": 134,
+    "train_size": 6289,
+    "test_size": 1748,
+    "models": [
+        "Linear Regression",
+        "SVR",
+        "KNN",
+        "Random Forest"
+    ],
+    "best_model": "Linear Regression",
+    "timestamp": "2025-12-08 12:00:18"
+}
