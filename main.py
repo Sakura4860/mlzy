@@ -162,6 +162,13 @@ def main():
     logger.info("\n[Step 5 Complete] 4 baseline models trained successfully!")
     logger.info("LSTM will be trained separately if needed.")
     
+    # 保存训练数据用于特征精简实验
+    logger.info("\nSaving training data for feature reduction experiments...")
+    pd.DataFrame(X_train_scaled, columns=feature_cols).to_csv(METRICS_DIR / 'X_train_full.csv', index=False)
+    pd.DataFrame(X_test_scaled, columns=feature_cols).to_csv(METRICS_DIR / 'X_test_full.csv', index=False)
+    pd.Series(y_train).to_csv(METRICS_DIR / 'y_train.csv', index=False, header=['Total_Energy_kWh'])
+    pd.Series(y_test).to_csv(METRICS_DIR / 'y_test.csv', index=False, header=['Total_Energy_kWh'])
+    
     # 5.5 LSTM（可选：需要较长训练时间，单独运行）
     # logger.info("\n--- Training LSTM ---")
     # sequence_length = MODEL_PARAMS['lstm']['sequence_length']
