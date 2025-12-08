@@ -70,24 +70,24 @@ class FeatureEngineer:
         
         for col in columns:
             for window in windows:
-                # 滑动平均
+                # 滑动平均 (使用shift(1)避免数据泄露)
                 feature_name = f'{col}_rolling_mean_{window}'
-                df[feature_name] = df[col].rolling(window=window, min_periods=1).mean()
+                df[feature_name] = df[col].shift(1).rolling(window=window, min_periods=1).mean()
                 self.feature_names.append(feature_name)
                 
                 # 滑动最大值
                 feature_name = f'{col}_rolling_max_{window}'
-                df[feature_name] = df[col].rolling(window=window, min_periods=1).max()
+                df[feature_name] = df[col].shift(1).rolling(window=window, min_periods=1).max()
                 self.feature_names.append(feature_name)
                 
                 # 滑动最小值
                 feature_name = f'{col}_rolling_min_{window}'
-                df[feature_name] = df[col].rolling(window=window, min_periods=1).min()
+                df[feature_name] = df[col].shift(1).rolling(window=window, min_periods=1).min()
                 self.feature_names.append(feature_name)
                 
                 # 滑动标准差
                 feature_name = f'{col}_rolling_std_{window}'
-                df[feature_name] = df[col].rolling(window=window, min_periods=1).std()
+                df[feature_name] = df[col].shift(1).rolling(window=window, min_periods=1).std()
                 self.feature_names.append(feature_name)
         
         logger.info(f"Created {len(columns) * len(windows) * 4} rolling features")
