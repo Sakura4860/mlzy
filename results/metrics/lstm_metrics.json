@@ -1,0 +1,10 @@
+{
+  "model": "LSTM",
+  "feature_set": "lite",
+  "num_features": 12,
+  "sequence_length": 24,
+  "RMSE": 4.355545308438935,
+  "MAE": 3.309361651436082,
+  "R2": 0.7953983549447861,
+  "MAPE": 13.427020740347087
+}

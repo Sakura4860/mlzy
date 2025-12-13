@@ -1,0 +1,15 @@
+{
+  "model": "ImprovedLSTM",
+  "feature_set": "lite",
+  "num_features": 12,
+  "sequence_length": 48,
+  "hidden_size": 128,
+  "num_layers": 3,
+  "final_train_loss": 7.154177495024421,
+  "best_val_loss": 3.492836391925812,
+  "epochs_trained": 60,
+  "RMSE": 3.1847221767572185,
+  "MAE": 2.349444704055786,
+  "R2": 0.8895190550345293,
+  "MAPE": 9.988879803032201
+}

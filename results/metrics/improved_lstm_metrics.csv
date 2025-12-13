@@ -1,0 +1,2 @@
+model,feature_set,num_features,sequence_length,hidden_size,num_layers,final_train_loss,best_val_loss,epochs_trained,RMSE,MAE,R2,MAPE
+ImprovedLSTM,lite,12,48,128,3,7.154177495024421,3.492836391925812,60,3.1847221767572185,2.349444704055786,0.8895190550345293,9.988879803032201
