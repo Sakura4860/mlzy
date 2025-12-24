@@ -1,4 +1,10 @@
-# 项目实施指南
+# 项目使用指南 (最终修复版)
+
+**项目状态**: ✅ 数据泄露已修复，所有模型使用合法特征  
+**推荐模型**: RF Lite (12特征, R²=0.9338, MAPE=7.31%)  
+**最后更新**: 2025-12-24
+
+---
 
 ## 快速开始
 
@@ -7,26 +13,40 @@
 pip install -r requirements.txt
 ```
 
-### 2. 运行完整实验
+### 2. 运行完整实验流程
+
+#### 方法A: 使用最新修复版本 (推荐)
 ```bash
-python main.py
+# 1. 使用修复后的122合法特征训练所有模型
+python fix_final.py
+
+# 2. 创建12特征精简集合（无泄露）
+python create_lite_features_fixed.py
+
+# 3. 训练RF Lite模型（最佳性能）
+python train_lite_model_fixed.py
+
+# 4. 训练改进版LSTM
+python train_improved_lstm.py
+
+# 5. 生成所有可视化图表
+python update_visualizations.py
+python regenerate_model_plots.py
 ```
 
-这将执行以下步骤：
-- 加载和合并数据
-- 数据预处理
-- 特征工程
-- 训练5个模型（LR, SVR, KNN, RF, LSTM）
-- 评估和比较模型
-- 生成可视化图表
-- 保存模型和结果
+#### 方法B: 使用原始脚本（⚠️ 包含数据泄露）
+```bash
+python main.py  # 仅用于教学演示，不可用于生产
+```
 
 ### 3. 使用Jupyter Notebook交互式探索
 ```bash
 jupyter notebook
 ```
 
-打开 `notebooks/01_data_exploration.ipynb` 进行数据探索。
+打开 [notebooks/01_data_exploration.ipynb](notebooks/01_data_exploration.ipynb) 进行数据探索。
+
+---
 
 ## 项目结构详解
 
@@ -46,17 +66,19 @@ jupyter notebook
 - 数据归一化（Min-Max Scaler）
 
 #### 4. `src/feature_engineering.py`
-- 创建滞后特征（1,2,3,6,12,24小时前）
-- 创建滑动窗口统计特征
-- 创建时间特征（小时、星期、季节等）
-- 创建交互特征
+- 创建滞后特征（1,2,3,24小时前）✅ 合法
+- 创建滚动统计特征（shift后rolling）✅ 修复
+- 创建时间特征（小时、星期、季节等）✅ 合法
+- ~~创建差分特征~~ ❌ 已移除（数据泄露）
+- ~~使用能耗组成部分~~ ❌ 已移除（数据泄露）
 
 #### 5. `src/models/`
-- `linear_regression.py`: 线性回归基准模型
+- `linear_regression.py`: 线性回归基线模型
 - `svr_model.py`: 支持向量回归
 - `knn_model.py`: K近邻回归
 - `random_forest.py`: 随机森林（可输出特征重要性）
-- `lstm_model.py`: LSTM深度学习模型
+- `improved_lstm_model.py`: 改进版LSTM（3层+注意力）
+- `lstm_model.py`: LSTM Baseline
 
 #### 6. `src/evaluation.py`
 - 模型评估（RMSE, MAE, R², MAPE）
@@ -70,33 +92,245 @@ jupyter notebook
 - 模型比较图
 - 训练历史图
 
+---
+
+## 模型性能总览 (修复后)
+
+| 模型 | RMSE | MAE | R² | MAPE(%) | 特征数 | 推荐 |
+|------|------|-----|-----|---------|--------|------|
+| **RF Lite** 🏆 | **2.49** | **1.71** | **0.9338** | **7.31** | **12** | ✅ 生产部署 |
+| RF Full | 2.62 | 1.85 | 0.9264 | 8.15 | 122 | ✅ 研究对比 |
+| Improved LSTM | 3.18 | 2.35 | 0.8895 | 9.99 | 12 | ✅ 深度学习实验 |
+| Linear Regression | 3.43 | 2.50 | 0.8739 | 10.40 | 122 | ✅ 基线模型 |
+| Baseline LSTM | 4.36 | 3.31 | 0.7954 | 13.43 | 12 | ⚠️ 仅供对比 |
+| SVR | 5.20 | 4.04 | 0.7100 | 15.68 | 122 | ⚠️ 性能较差 |
+| KNN | 5.49 | 3.87 | 0.6773 | 16.66 | 122 | ⚠️ 性能较差 |
+
+---
+
 ## 自定义实验
 
-### 修改建筑类型
-编辑 `src/config.py`:
+### 修改目标变量（不推荐，可能引入泄露）
 ```python
-SELECTED_BUILDINGS = ['Schools']  # 或 ['Restaurants', 'Shops']
+# src/config.py
+TARGET_COLUMN = 'Total_Energy_kWh'  # 保持默认，其他可能泄露
 ```
 
-### 修改预测目标
-编辑 `src/config.py`:
+### 调整RF Lite参数
 ```python
-TARGET_COLUMN = 'SpaceHeating_kWh'  # 预测供暖能耗
-# 或 'SpaceCooling_kWh'  # 预测制冷能耗
-```
-
-### 调整模型参数
-编辑 `src/config.py` 中的 `MODEL_PARAMS` 字典。
-
-例如，增加随机森林的树数量：
-```python
-'random_forest': {
-    'n_estimators': 200,  # 从100增加到200
+# train_lite_model_fixed.py
+rf_params = {
+    'n_estimators': 200,      # 从100增加到200
+    'max_depth': 20,          # 从15增加到20
+    'min_samples_split': 5,   # 从10减少到5
     ...
 }
 ```
 
 ### 修改LSTM参数
+```python
+# train_improved_lstm.py
+model = ImprovedLSTMModel(
+    input_size=12,
+    hidden_size=256,          # 从128增加到256
+    num_layers=4,             # 从3增加到4
+    dropout=0.4               # 从0.3增加到0.4
+)
+```
+
+---
+
+## 结果文件说明
+
+运行完成后，`results/` 目录包含：
+
+### `figures/` - 图表 (19个PNG文件)
+**预测对比图**:
+- `Linear_Regression_predictions.png`
+- `SVR_predictions.png`
+- `KNN_predictions.png`
+- `Random_Forest_predictions.png`
+- `Random_Forest_Lite_predictions.png`
+- `LSTM_Baseline_predictions.png`
+- `Improved_LSTM_predictions.png`
+
+**残差分析图**:
+- `Linear_Regression_residuals.png`
+- `SVR_residuals.png`
+- `KNN_residuals.png`
+- `Random_Forest_residuals.png`
+- `Random_Forest_Lite_residuals.png`
+- `LSTM_Baseline_residuals.png`
+- `Improved_LSTM_residuals.png`
+
+**对比分析图**:
+- `model_comparison_r2.png` - R²对比
+- `model_comparison_mape.png` - MAPE对比
+- `model_comparison_rmse.png` - RMSE对比
+- `feature_comparison_chart.png` - 特征数对比
+- `feature_importance_lite_fixed.png` - 12特征重要性
+- `feature_importance_final.png` - 122特征重要性
+
+### `metrics/` - 评估指标
+- `model_comparison_final.csv`: 所有模型性能对比（修复后）
+- `feature_importance_final.csv`: 122特征重要性列表
+- `feature_importance_lite_fixed.csv`: 12特征重要性
+- `improved_lstm_metrics.csv/json`: LSTM详细指标
+- `X_train_final.csv`, `X_test_final.csv`: 特征数据（122列）
+- `y_train.csv`, `y_test.csv`: 目标变量
+- `valid_features_final.txt`: 122个合法特征列表
+
+### `models/` - 保存的模型
+**最终模型** (无泄露):
+- `lr_final.pkl` - Linear Regression
+- `svr_final.pkl` - SVR
+- `knn_final.pkl` - KNN
+- `rf_final.pkl` - Random Forest Full
+- `random_forest_lite_fixed.pkl` - **RF Lite 🏆 最佳**
+- `improved_lstm.pth` - Improved LSTM
+- `lite_features_fixed.txt` - RF Lite使用的12个特征列表
+
+### `experiment_summary.json`
+实验概要信息（修复前版本，仅供参考）
+
+---
+
+## 数据泄露说明 ⚠️
+
+### 已识别并移除的泄露特征 (12个)
+
+**1. 能耗组成部分** (10个特征):
+```python
+# 这些是Total_Energy_kWh的直接组成部分，相关性>0.98
+Electricity_kWh, Electricity_J
+HotWater_kWh, HotWater_J
+SpaceHeating_kWh, SpaceHeating_J
+SpaceCooling_kWh, SpaceCooling_J
+HotWater_SpaceHeating_kWh, HotWater_SpaceHeating_J
+```
+
+**2. 差分特征** (2个特征):
+```python
+# y[t] = diff_1 + lag_1 可完美重构目标
+Total_Energy_kWh_diff_1
+Total_Energy_kWh_diff_24
+```
+
+### 合法的特征类型 ✅
+
+**滞后特征** (使用shift):
+```python
+lag_1 = df['Total_Energy_kWh'].shift(1)    # ✅ 使用历史值
+lag_24 = df['Total_Energy_kWh'].shift(24)  # ✅ 昨天同时刻
+```
+
+**滚动特征** (shift后rolling):
+```python
+rolling_mean = df['col'].shift(1).rolling(3).mean()  # ✅ 仅历史数据
+```
+
+---
+
+## 报告撰写建议 (7000字课程设计)
+
+### 1. 背景介绍 (1500字)
+- 能源管理系统的重要性
+- 建筑能耗预测的应用场景
+- 瑞士数据集描述
+- 研究目标和意义
+- **新增**: 数据泄露问题的普遍性及重要性
+
+### 2. 机器学习方法介绍 (1500字)
+- 线性回归原理
+- SVR与核函数
+- KNN的相似性度量
+- 随机森林的集成学习
+- LSTM的时间序列建模能力
+- **新增**: 特征工程中的数据泄露风险
+
+### 3. 方法具体实施 (2500字) ⬆️ 增加篇幅
+- 数据预处理流程（截图）
+- 特征工程策略
+- **重点**: 数据泄露的识别与修复过程
+- 模型训练过程
+- 超参数设置
+- **新增**: 特征精简策略（122→12特征）
+
+### 4. 实验结果 (1500字)
+- 各模型性能对比表（修复前后）
+- 可视化图表分析
+- 特征重要性分析
+- **新增**: RF Lite优于RF Full的原因分析
+- **新增**: LSTM改进效果分析
+
+### 5. 总结与讨论 (500字)
+- 最佳模型及原因（RF Lite）
+- **重点**: 数据泄露的经验教训
+- **重点**: 特征质量>特征数量的启示
+- 实际应用价值
+- 未来改进方向
+
+---
+
+## 常见问题
+
+### Q1: 为什么12特征优于122特征？
+A: 
+- 精选的12特征覆盖95.71%总重要性
+- 减少冗余特征，降低过拟合风险
+- 特征质量>特征数量，符合奥卡姆剃刀原则
+
+### Q2: 如何确保没有数据泄露？
+A: 
+- 所有特征必须在预测时刻之前可获得
+- 不使用目标的同期测量值或其直接函数
+- 检查特征-目标相关性（<0.95为正常）
+- 验证R²不应达到1.0或接近1.0（除非真实数据）
+
+### Q3: LSTM为什么不如RF？
+A: 
+- 数据量有限（8k样本，LSTM需要10k+）
+- lag_1特征已包含大部分信息
+- 任务相对简单，线性趋势为主
+- RF的集成学习更适合这类任务
+
+### Q4: 如何使用GPU加速LSTM？
+A: 
+确保安装了CUDA版本的PyTorch:
+```bash
+pip install torch --index-url https://download.pytorch.org/whl/cu118
+```
+
+LSTM会自动检测并使用GPU。
+
+### Q5: 如何在生产环境部署？
+A:
+```python
+# 1. 加载RF Lite模型
+import joblib
+model = joblib.load('results/models/random_forest_lite_fixed.pkl')
+
+# 2. 准备12个特征
+features = ['Total_Energy_kWh_lag_1', 'Total_Energy_kWh_lag_24', ...]
+
+# 3. 预测
+prediction = model.predict(X_new[features])
+```
+
+---
+
+## 参考文档
+
+- [README.md](README.md) - 项目总览
+- [PROJECT_STATUS.md](PROJECT_STATUS.md) - 完成状态
+- [RESULTS_SUMMARY.md](RESULTS_SUMMARY.md) - 结果摘要
+- [DATA_LEAKAGE_FIX_COMPLETE.md](DATA_LEAKAGE_FIX_COMPLETE.md) - 数据泄露修复详情
+- [EXPERIMENT_LOG_v2.md](EXPERIMENT_LOG_v2.md) - 重整后的实验日志
+
+---
+
+**祝实验顺利！如有问题请参考文档或查看源代码注释。**
+
 ```python
 'lstm': {
     'hidden_size': 256,    # 增加隐藏层大小
