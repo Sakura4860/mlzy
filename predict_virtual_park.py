@@ -358,35 +358,118 @@ def calculate_pv_capacity(park_energy):
     
     return pv_results
 
+def calculate_pv_generation(datetime_series, pv_capacity_kw):
+    """计算光伏发电功率
+    
+    Args:
+        datetime_series: datetime序列
+        pv_capacity_kw: 光伏装机容量(kW)
+    
+    Returns:
+        DataFrame: 包含datetime和pv_generation_kWh的数据框
+    """
+    from datetime import datetime, timedelta
+    
+    # 加载天气数据获取GHI
+    DATA_DIR = Path('data')
+    df_weather = pd.read_excel(DATA_DIR / 'WEATHER_DATA_ZURICH_2020_2019.xlsx')
+    
+    # 创建datetime
+    start_date = datetime(2019, 1, 1, 0, 0, 0)
+    df_weather['datetime'] = [start_date + timedelta(hours=i) for i in range(len(df_weather))]
+    df_weather['datetime'] = pd.to_datetime(df_weather['datetime'])
+    
+    # 获取GHI列
+    if 'GHI[kW/m2]' in df_weather.columns:
+        df_weather['GHI'] = df_weather['GHI[kW/m2]']
+    
+    # 确保datetime_series也是datetime类型
+    df_datetime = pd.DataFrame({'datetime': pd.to_datetime(datetime_series)})
+    df_pv = pd.merge(df_datetime, df_weather[['datetime', 'GHI']], on='datetime', how='left')
+    
+    # 计算光伏发电功率 (kWh)
+    # 公式: 发电量 = GHI (kW/m2) × 光伏板面积 (m2) × 效率 × (1 - 系统损失)
+    # 光伏板面积 = 装机容量 × 每kW面积
+    panel_area = pv_capacity_kw * PV_PARAMS['panel_area_per_kw']  # m2
+    df_pv['pv_generation_kWh'] = (
+        df_pv['GHI'] * panel_area * 
+        PV_PARAMS['panel_efficiency'] * 
+        (1 - PV_PARAMS['system_loss'])
+    )
+    df_pv['pv_generation_kWh'] = df_pv['pv_generation_kWh'].fillna(0)
+    
+    return df_pv[['datetime', 'pv_generation_kWh']]
+
 def visualize_park_energy(park_energy, building_contributions, pv_results):
     """可视化园区能耗和光伏系统"""
     
     print("\n生成可视化图表...")
     
+    # 确保datetime列是datetime类型
+    park_energy = park_energy.copy()
+    park_energy['datetime'] = pd.to_datetime(park_energy['datetime'])
+    
+    # 计算光伏发电
+    pv_capacity = pv_results['recommended']['capacity_kw']
+    df_pv = calculate_pv_generation(park_energy['datetime'], pv_capacity)
+    
+    # 合并光伏发电数据
+    park_energy_with_pv = pd.merge(park_energy, df_pv, on='datetime', how='left')
+    park_energy_with_pv['pv_generation_kWh'] = park_energy_with_pv['pv_generation_kWh'].fillna(0)
+    
+    # 计算净负荷（能耗 - 光伏发电）
+    park_energy_with_pv['net_load_kWh'] = (
+        park_energy_with_pv['total_predicted_kWh'] - 
+        park_energy_with_pv['pv_generation_kWh']
+    )
+    
     # 图1: 园区总能耗时间序列
     fig, axes = plt.subplots(2, 1, figsize=(15, 10))
     
-    # 子图1: 预测 vs 实际
+    # 子图1: 能耗 vs 光伏发电（一周示例）
     ax1 = axes[0]
-    park_energy_sample = park_energy.iloc[:24*7]  # 显示一周数据
-    ax1.plot(park_energy_sample['datetime'], park_energy_sample['total_actual_kWh'], 
-             label='实际能耗', alpha=0.7, linewidth=2)
-    ax1.plot(park_energy_sample['datetime'], park_energy_sample['total_predicted_kWh'], 
-             label='预测能耗', alpha=0.7, linewidth=2, linestyle='--')
+    park_sample = park_energy_with_pv.iloc[:24*7]  # 显示一周数据
+    
+    ax1.plot(park_sample['datetime'], park_sample['total_actual_kWh'], 
+             label='实际能耗', alpha=0.7, linewidth=2, color='orangered')
+    ax1.plot(park_sample['datetime'], park_sample['total_predicted_kWh'], 
+             label='预测能耗', alpha=0.7, linewidth=2, linestyle='--', color='red')
+    ax1.plot(park_sample['datetime'], park_sample['pv_generation_kWh'], 
+             label='光伏发电', alpha=0.8, linewidth=2.5, color='gold')
+    ax1.plot(park_sample['datetime'], park_sample['net_load_kWh'], 
+             label='净负荷(能耗-光伏)', alpha=0.7, linewidth=2, color='steelblue', linestyle=':')
+    
+    # 添加零线参考
+    ax1.axhline(y=0, color='gray', linestyle='-', linewidth=0.5, alpha=0.5)
+    
     ax1.set_xlabel('时间', fontsize=12)
-    ax1.set_ylabel('能耗 (kWh)', fontsize=12)
-    ax1.set_title('虚拟园区总能耗 - 一周示例', fontsize=14, fontweight='bold')
-    ax1.legend(fontsize=10)
+    ax1.set_ylabel('功率 (kWh)', fontsize=12)
+    ax1.set_title('虚拟园区能耗与光伏发电 - 一周示例', fontsize=14, fontweight='bold')
+    ax1.legend(fontsize=10, loc='best')
     ax1.grid(alpha=0.3)
     
-    # 子图2: 日均负荷曲线
+    # 子图2: 日均负荷曲线（能耗 vs 光伏发电）
     ax2 = axes[1]
-    hourly_avg = park_energy.groupby('hour')['total_predicted_kWh'].mean()
-    ax2.bar(hourly_avg.index, hourly_avg.values, alpha=0.7, color='steelblue')
+    hourly_demand = park_energy_with_pv.groupby('hour')['total_predicted_kWh'].mean()
+    hourly_pv = park_energy_with_pv.groupby('hour')['pv_generation_kWh'].mean()
+    hourly_net = park_energy_with_pv.groupby('hour')['net_load_kWh'].mean()
+    
+    x = np.arange(len(hourly_demand))
+    width = 0.35
+    
+    bars1 = ax2.bar(x - width/2, hourly_demand.values, width, 
+                    alpha=0.7, color='orangered', label='平均能耗')
+    bars2 = ax2.bar(x + width/2, hourly_pv.values, width, 
+                    alpha=0.7, color='gold', label='平均光伏发电')
+    ax2.plot(x, hourly_net.values, color='steelblue', linewidth=2.5, 
+             marker='o', markersize=4, label='净负荷', linestyle='-', alpha=0.8)
+    
+    ax2.axhline(y=0, color='gray', linestyle='-', linewidth=0.5, alpha=0.5)
     ax2.set_xlabel('小时', fontsize=12)
-    ax2.set_ylabel('平均能耗 (kWh)', fontsize=12)
-    ax2.set_title('园区日均负荷曲线', fontsize=14, fontweight='bold')
+    ax2.set_ylabel('平均功率 (kWh)', fontsize=12)
+    ax2.set_title('园区日均负荷曲线（能耗 vs 光伏发电）', fontsize=14, fontweight='bold')
     ax2.set_xticks(range(0, 24, 2))
+    ax2.legend(fontsize=10, loc='best')
     ax2.grid(alpha=0.3, axis='y')
     
     plt.tight_layout()
