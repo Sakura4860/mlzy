@@ -1,0 +1,390 @@
+{
+  "Hospitals": {
+    "building_type": "Hospitals",
+    "model": "RF_Lite",
+    "n_features": 12,
+    "features": [
+      "Total_Energy_kWh_lag_1",
+      "Total_Energy_kWh_lag_24",
+      "Total_Energy_kWh_lag_2",
+      "hour",
+      "hour_sin",
+      "hour_cos",
+      "day_of_week",
+      "is_weekend",
+      "Total_Energy_kWh_rolling_std_24",
+      "Total_Energy_kWh_rolling_mean_24",
+      "Temperature",
+      "GHI"
+    ],
+    "train_samples": 6027,
+    "val_samples": 669,
+    "test_samples": 1675,
+    "train": {
+      "r2": 0.9820109580700837,
+      "rmse": 1.4676127152457912,
+      "mae": 0.9124352103329162,
+      "mape": 4.212452384506651
+    },
+    "val": {
+      "r2": 0.7623022441401056,
+      "rmse": 1.2093909935273415,
+      "mae": 0.7747923675770442,
+      "mape": 5.5968209551272015
+    },
+    "test": {
+      "r2": 0.932449233333317,
+      "rmse": 2.5301563053025142,
+      "mae": 1.7408187927816987,
+      "mape": 7.360007588806096
+    },
+    "feature_importance": [
+      {
+        "feature": "Total_Energy_kWh_lag_1",
+        "importance": 0.9184009735177412
+      },
+      {
+        "feature": "hour",
+        "importance": 0.027050352657803325
+      },
+      {
+        "feature": "hour_sin",
+        "importance": 0.01145993187660473
+      },
+      {
+        "feature": "hour_cos",
+        "importance": 0.009509958854594207
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_mean_24",
+        "importance": 0.007302204037880164
+      },
+      {
+        "feature": "Temperature",
+        "importance": 0.0072031748425443465
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_2",
+        "importance": 0.005763018242337968
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_24",
+        "importance": 0.004161323612372667
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_std_24",
+        "importance": 0.003996657678001254
+      },
+      {
+        "feature": "GHI",
+        "importance": 0.003290863833819225
+      },
+      {
+        "feature": "day_of_week",
+        "importance": 0.0017426512520854723
+      },
+      {
+        "feature": "is_weekend",
+        "importance": 0.00011888959421554296
+      }
+    ],
+    "energy_stats": {
+      "mean_kwh": 22.195703257390857,
+      "std_kwh": 10.590599818775544,
+      "min_kwh": 9.524559497419279,
+      "max_kwh": 63.81970601961285
+    },
+    "training_date": "2025-12-31 11:19:35"
+  },
+  "Restaurants": {
+    "building_type": "Restaurants",
+    "model": "RF_Lite",
+    "n_features": 12,
+    "features": [
+      "Total_Energy_kWh_lag_1",
+      "Total_Energy_kWh_lag_24",
+      "Total_Energy_kWh_lag_2",
+      "hour",
+      "hour_sin",
+      "hour_cos",
+      "day_of_week",
+      "is_weekend",
+      "Total_Energy_kWh_rolling_std_24",
+      "Total_Energy_kWh_rolling_mean_24",
+      "Temperature",
+      "GHI"
+    ],
+    "train_samples": 6027,
+    "val_samples": 669,
+    "test_samples": 1675,
+    "train": {
+      "r2": 0.9371370560941026,
+      "rmse": 50.244186831872575,
+      "mae": 22.562900769064612,
+      "mape": 30.382142699312492
+    },
+    "val": {
+      "r2": 0.8246505288956621,
+      "rmse": 43.721624845641735,
+      "mae": 23.068489410479856,
+      "mape": 32.94054300889144
+    },
+    "test": {
+      "r2": 0.8313575636216838,
+      "rmse": 103.39662616589861,
+      "mae": 51.453165105775746,
+      "mape": 62.86607973005276
+    },
+    "feature_importance": [
+      {
+        "feature": "Total_Energy_kWh_lag_1",
+        "importance": 0.6183907141840657
+      },
+      {
+        "feature": "hour_cos",
+        "importance": 0.1632503019420607
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_2",
+        "importance": 0.04831189474215717
+      },
+      {
+        "feature": "hour",
+        "importance": 0.04101122027667571
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_std_24",
+        "importance": 0.03580152944637863
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_mean_24",
+        "importance": 0.020303817388264467
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_24",
+        "importance": 0.01781644049171261
+      },
+      {
+        "feature": "day_of_week",
+        "importance": 0.014955102499358289
+      },
+      {
+        "feature": "Temperature",
+        "importance": 0.01445240487573752
+      },
+      {
+        "feature": "hour_sin",
+        "importance": 0.013277343151611052
+      },
+      {
+        "feature": "GHI",
+        "importance": 0.011977116334326863
+      },
+      {
+        "feature": "is_weekend",
+        "importance": 0.00045211466765130614
+      }
+    ],
+    "energy_stats": {
+      "mean_kwh": 256.49829588396454,
+      "std_kwh": 210.0738486828339,
+      "min_kwh": 16.44255759570222,
+      "max_kwh": 1271.4258403620806
+    },
+    "training_date": "2025-12-31 11:19:40"
+  },
+  "Schools": {
+    "building_type": "Schools",
+    "model": "RF_Lite",
+    "n_features": 12,
+    "features": [
+      "Total_Energy_kWh_lag_1",
+      "Total_Energy_kWh_lag_24",
+      "Total_Energy_kWh_lag_2",
+      "hour",
+      "hour_sin",
+      "hour_cos",
+      "day_of_week",
+      "is_weekend",
+      "Total_Energy_kWh_rolling_std_24",
+      "Total_Energy_kWh_rolling_mean_24",
+      "Temperature",
+      "GHI"
+    ],
+    "train_samples": 6027,
+    "val_samples": 669,
+    "test_samples": 1675,
+    "train": {
+      "r2": 0.9415245186406368,
+      "rmse": 27.173050745972827,
+      "mae": 13.82043133130327,
+      "mape": 79.93211575535881
+    },
+    "val": {
+      "r2": 0.8740109349198267,
+      "rmse": 17.254686587136703,
+      "mae": 9.996524791479787,
+      "mape": 94.23097901070335
+    },
+    "test": {
+      "r2": 0.8111733078706302,
+      "rmse": 52.98357712165035,
+      "mae": 33.43237724156029,
+      "mape": 150.14235311947445
+    },
+    "feature_importance": [
+      {
+        "feature": "Total_Energy_kWh_lag_1",
+        "importance": 0.7928740752216621
+      },
+      {
+        "feature": "hour",
+        "importance": 0.07026674575802079
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_2",
+        "importance": 0.03326888778215914
+      },
+      {
+        "feature": "hour_sin",
+        "importance": 0.023616712708101027
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_mean_24",
+        "importance": 0.018560590896962575
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_24",
+        "importance": 0.012847540266162964
+      },
+      {
+        "feature": "Temperature",
+        "importance": 0.01171531071769028
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_std_24",
+        "importance": 0.011663208412555488
+      },
+      {
+        "feature": "hour_cos",
+        "importance": 0.010187506162756597
+      },
+      {
+        "feature": "GHI",
+        "importance": 0.008858352493980239
+      },
+      {
+        "feature": "day_of_week",
+        "importance": 0.005801390867755951
+      },
+      {
+        "feature": "is_weekend",
+        "importance": 0.0003396787121929099
+      }
+    ],
+    "energy_stats": {
+      "mean_kwh": 104.55491036021208,
+      "std_kwh": 113.93479358603282,
+      "min_kwh": 2.346339110125342,
+      "max_kwh": 680.7465982357319
+    },
+    "training_date": "2025-12-31 11:19:46"
+  },
+  "Shops": {
+    "building_type": "Shops",
+    "model": "RF_Lite",
+    "n_features": 12,
+    "features": [
+      "Total_Energy_kWh_lag_1",
+      "Total_Energy_kWh_lag_24",
+      "Total_Energy_kWh_lag_2",
+      "hour",
+      "hour_sin",
+      "hour_cos",
+      "day_of_week",
+      "is_weekend",
+      "Total_Energy_kWh_rolling_std_24",
+      "Total_Energy_kWh_rolling_mean_24",
+      "Temperature",
+      "GHI"
+    ],
+    "train_samples": 6027,
+    "val_samples": 669,
+    "test_samples": 1675,
+    "train": {
+      "r2": 0.9862241004417125,
+      "rmse": 9.898039614464242,
+      "mae": 6.584165690493657,
+      "mape": 10.143068909403674
+    },
+    "val": {
+      "r2": 0.9698369811423008,
+      "rmse": 14.73742506235381,
+      "mae": 10.471859970601617,
+      "mape": 14.304085130165747
+    },
+    "test": {
+      "r2": 0.9387749220053189,
+      "rmse": 14.254103363151252,
+      "mae": 9.48434048342712,
+      "mape": 18.701671224523796
+    },
+    "feature_importance": [
+      {
+        "feature": "Total_Energy_kWh_lag_1",
+        "importance": 0.6851524418428544
+      },
+      {
+        "feature": "hour_cos",
+        "importance": 0.1524261288656233
+      },
+      {
+        "feature": "hour_sin",
+        "importance": 0.052209867008233296
+      },
+      {
+        "feature": "hour",
+        "importance": 0.02729011300807814
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_mean_24",
+        "importance": 0.026701300332661305
+      },
+      {
+        "feature": "day_of_week",
+        "importance": 0.02660060394665893
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_2",
+        "importance": 0.010476429026651553
+      },
+      {
+        "feature": "Temperature",
+        "importance": 0.007452380626868824
+      },
+      {
+        "feature": "Total_Energy_kWh_rolling_std_24",
+        "importance": 0.006594132557741567
+      },
+      {
+        "feature": "Total_Energy_kWh_lag_24",
+        "importance": 0.0027564059068019187
+      },
+      {
+        "feature": "GHI",
+        "importance": 0.002234791603951441
+      },
+      {
+        "feature": "is_weekend",
+        "importance": 0.00010540527387547065
+      }
+    ],
+    "energy_stats": {
+      "mean_kwh": 127.55242021450914,
+      "std_kwh": 80.40879479702791,
+      "min_kwh": 11.573277991948318,
+      "max_kwh": 337.3268557773798
+    },
+    "training_date": "2025-12-31 11:19:51"
+  }
+}

@@ -1,0 +1,97 @@
+{
+  "building_type": "Schools",
+  "model": "RF_Lite",
+  "n_features": 12,
+  "features": [
+    "Total_Energy_kWh_lag_1",
+    "Total_Energy_kWh_lag_24",
+    "Total_Energy_kWh_lag_2",
+    "hour",
+    "hour_sin",
+    "hour_cos",
+    "day_of_week",
+    "is_weekend",
+    "Total_Energy_kWh_rolling_std_24",
+    "Total_Energy_kWh_rolling_mean_24",
+    "Temperature",
+    "GHI"
+  ],
+  "train_samples": 6027,
+  "val_samples": 669,
+  "test_samples": 1675,
+  "train": {
+    "r2": 0.9415245186406368,
+    "rmse": 27.173050745972827,
+    "mae": 13.82043133130327,
+    "mape": 79.93211575535881
+  },
+  "val": {
+    "r2": 0.8740109349198267,
+    "rmse": 17.254686587136703,
+    "mae": 9.996524791479787,
+    "mape": 94.23097901070335
+  },
+  "test": {
+    "r2": 0.8111733078706302,
+    "rmse": 52.98357712165035,
+    "mae": 33.43237724156029,
+    "mape": 150.14235311947445
+  },
+  "feature_importance": [
+    {
+      "feature": "Total_Energy_kWh_lag_1",
+      "importance": 0.7928740752216621
+    },
+    {
+      "feature": "hour",
+      "importance": 0.07026674575802079
+    },
+    {
+      "feature": "Total_Energy_kWh_lag_2",
+      "importance": 0.03326888778215914
+    },
+    {
+      "feature": "hour_sin",
+      "importance": 0.023616712708101027
+    },
+    {
+      "feature": "Total_Energy_kWh_rolling_mean_24",
+      "importance": 0.018560590896962575
+    },
+    {
+      "feature": "Total_Energy_kWh_lag_24",
+      "importance": 0.012847540266162964
+    },
+    {
+      "feature": "Temperature",
+      "importance": 0.01171531071769028
+    },
+    {
+      "feature": "Total_Energy_kWh_rolling_std_24",
+      "importance": 0.011663208412555488
+    },
+    {
+      "feature": "hour_cos",
+      "importance": 0.010187506162756597
+    },
+    {
+      "feature": "GHI",
+      "importance": 0.008858352493980239
+    },
+    {
+      "feature": "day_of_week",
+      "importance": 0.005801390867755951
+    },
+    {
+      "feature": "is_weekend",
+      "importance": 0.0003396787121929099
+    }
+  ],
+  "energy_stats": {
+    "mean_kwh": 104.55491036021208,
+    "std_kwh": 113.93479358603282,
+    "min_kwh": 2.346339110125342,
+    "max_kwh": 680.7465982357319
+  },
+  "training_date": "2025-12-31 11:19:46"
+}

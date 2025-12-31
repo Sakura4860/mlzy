@@ -1,0 +1,97 @@
+{
+  "building_type": "Restaurants",
+  "model": "RF_Lite",
+  "n_features": 12,
+  "features": [
+    "Total_Energy_kWh_lag_1",
+    "Total_Energy_kWh_lag_24",
+    "Total_Energy_kWh_lag_2",
+    "hour",
+    "hour_sin",
+    "hour_cos",
+    "day_of_week",
+    "is_weekend",
+    "Total_Energy_kWh_rolling_std_24",
+    "Total_Energy_kWh_rolling_mean_24",
+    "Temperature",
+    "GHI"
+  ],
+  "train_samples": 6027,
+  "val_samples": 669,
+  "test_samples": 1675,
+  "train": {
+    "r2": 0.9371370560941026,
+    "rmse": 50.244186831872575,
+    "mae": 22.562900769064612,
+    "mape": 30.382142699312492
+  },
+  "val": {
+    "r2": 0.8246505288956621,
+    "rmse": 43.721624845641735,
+    "mae": 23.068489410479856,
+    "mape": 32.94054300889144
+  },
+  "test": {
+    "r2": 0.8313575636216838,
+    "rmse": 103.39662616589861,
+    "mae": 51.453165105775746,
+    "mape": 62.86607973005276
+  },
+  "feature_importance": [
+    {
+      "feature": "Total_Energy_kWh_lag_1",
+      "importance": 0.6183907141840657
+    },
+    {
+      "feature": "hour_cos",
+      "importance": 0.1632503019420607
+    },
+    {
+      "feature": "Total_Energy_kWh_lag_2",
+      "importance": 0.04831189474215717
+    },
+    {
+      "feature": "hour",
+      "importance": 0.04101122027667571
+    },
+    {
+      "feature": "Total_Energy_kWh_rolling_std_24",
+      "importance": 0.03580152944637863
+    },
+    {
+      "feature": "Total_Energy_kWh_rolling_mean_24",
+      "importance": 0.020303817388264467
+    },
+    {
+      "feature": "Total_Energy_kWh_lag_24",
+      "importance": 0.01781644049171261
+    },
+    {
+      "feature": "day_of_week",
+      "importance": 0.014955102499358289
+    },
+    {
+      "feature": "Temperature",
+      "importance": 0.01445240487573752
+    },
+    {
+      "feature": "hour_sin",
+      "importance": 0.013277343151611052
+    },
+    {
+      "feature": "GHI",
+      "importance": 0.011977116334326863
+    },
+    {
+      "feature": "is_weekend",
+      "importance": 0.00045211466765130614
+    }
+  ],
+  "energy_stats": {
+    "mean_kwh": 256.49829588396454,
+    "std_kwh": 210.0738486828339,
+    "min_kwh": 16.44255759570222,
+    "max_kwh": 1271.4258403620806
+  },
+  "training_date": "2025-12-31 11:19:40"
+}

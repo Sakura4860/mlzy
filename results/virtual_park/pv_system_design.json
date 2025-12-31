@@ -1,0 +1,41 @@
+{
+  "park_annual_energy_kwh": 26434851.071301196,
+  "peak_power_kw": 7544.774091386797,
+  "daily_average_kwh": 69241.22027964832,
+  "calculation_methods": {
+    "method1_capacity_factor": {
+      "capacity_kw": 20117.847086226175,
+      "description": "基于容量系数15.0%"
+    },
+    "method2_peak_power": {
+      "capacity_kw": 9053.728909664156,
+      "description": "基于峰值功率 + 20%余量"
+    },
+    "method3_peak_sun_hours": {
+      "capacity_kw": 19783.205794185233,
+      "description": "基于峰值日照时数3.5h"
+    }
+  },
+  "recommended": {
+    "capacity_kw": 20117.847086226175,
+    "capacity_mw": 20.117847086226174,
+    "panel_area_m2": 100589.23543113087,
+    "panel_area_hectare": 10.058923543113087,
+    "installation_cost_chf": 30176770.629339263,
+    "installation_cost_million_chf": 30.176770629339263,
+    "annual_generation_kwh": 26434851.071301192,
+    "self_sufficiency_rate": 99.99999999999999,
+    "lifetime_years": 25
+  },
+  "pv_parameters": {
+    "panel_efficiency": 0.2,
+    "system_loss": 0.15,
+    "capacity_factor": 0.15,
+    "peak_sun_hours": 3.5,
+    "panel_area_per_kw": 5.0,
+    "cost_per_kw": 1500,
+    "lifetime_years": 25,
+    "degradation_rate": 0.005
+  },
+  "calculation_date": "2025-12-31 11:23:19"
+}
